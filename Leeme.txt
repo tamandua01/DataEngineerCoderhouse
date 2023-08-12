@@ -1,0 +1,30 @@
+Objetivo
+La idea del proyecto es generar un listado de juegos de steam con sus precios, por otro lado, usar otra api que mida el comportamiento del dólar paralelo en argentina. 
+Ambos se deben ir actualizando permanentemente. Cuando haya un cambio brusco en el dólar paralelo, hay que controlar si este no se vio reflejado en los precios de los juegos. 
+Dado el caso debe dar la alarma para notificar al usuario por si desea realizar la compra antes de la futura subida de precios de Steam.
+
+Api
+Hay 3 apis principales, ninguna de las 3 requiere autenticación
+
+"https://api.bluelytics.com.ar/v2/latest" Esta api devuelve Json con valores del dólar oficial y blue además de fecha de actualización. Puede ser consultada muchas veces al día.
+
+Para el código de los entregables de momento se puede tomar solo la api del dólar, pueden saltear directo al código del TP o leer la aclaración de las otras dos api.
+
+"http://api.steampowered.com/ISteamApps/GetAppList/v0001/" de esta obtengo el listado de todos los juegos de steam, dlc y demás. Me devuelve 2 datos importantes, el id(appid) y el nombre. Puede ser consultada muchas veces al día.
+
+https://store.steampowered.com/api/appdetails/?filters=price_overview&appids={appid}" Está cambiando {appid} por el valor de cada juego devuelve un Json que contiene el precio. 
+El problema de esta api es que solo permite 100000 lecturas por día. Se puede hacer la lectura de más de juego a la vez separando appid con , pero el numero tampoco puede ser muy grande. Con 50 appids probe y funciona.
+Esto me trae problemas de no poder actualizar completamente la base de datos rápidamente. Además de que trae otras problemáticas como ir actualizando la cantidad de juegos.
+Todo esto estoy viendo cómo solucionarlo pero para lo que es el trabajo practico dejaría de lado toda estas problemáticas y tomar en cuenta que al final lo que tengo es una base de datos en un archivo .csv
+
+Código del TP. 
+El código del TP se encuentra en el archivo Dolar.py . 
+El código primero toma los datos del api de Dólar, los transfiere a .csv.
+Toma el .csv del dólar y crea un dataframe, borra duplicados, guarda nuevamente el .csv.
+Toma un segundo .csv con datos de los juegos de steam con los precios y crea un nuevo dataframe.
+Con ambos dataframe crea tablas correspondientes en Redshift
+
+-----------------------------------------------
+Actualizacion
+
+El codigo ya genera el tipo correcto de cada columna y asigna las  PKey de cada tabla.
